@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rigorous-cnt"
+version = "0.2.0"
+description = "Reference implementations of Algorithms 1–6 of arXiv:2512.01588v2"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]

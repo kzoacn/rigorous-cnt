@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-22",
+  "sagemath": "10.7",
+  "python": "3.12.13",
+  "fpylll": "0.6.4",
+  "test_command": "PYTHONPATH=src sage -python -m unittest discover -s tests -v",
+  "fixtures": {
+    "examples/results/class2_sunits.json": {
+      "sha256": "e0ab60c2f9c29667796dd003e1f1dacc7d2e45040dc71fa0252cfa445ac67863",
+      "bytes": 59921
+    },
+    "examples/results/real_units.json": {
+      "sha256": "0bc0a213febd9ddd36bb90c941160014312f4b49c2be6dd8fd4dfe48fa574c51",
+      "bytes": 31696
+    }
+  },
+  "tests": {
+    "run": 48,
+    "passed": 48,
+    "elapsed_seconds": 45.43,
+    "scope": "test-suite duration, not an algorithm benchmark"
+  }
+}

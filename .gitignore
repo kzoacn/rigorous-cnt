@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+.venv/
+.work/
+IMPLEMENTATION_PLAN.md
+docs/FULL_PAPER_PLAN_ARCHIVE.md

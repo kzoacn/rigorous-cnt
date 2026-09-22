@@ -1,0 +1,53 @@
+test_calibration_resource_limit (test_calibration.CalibrationTests.test_calibration_resource_limit) ... ok
+test_certificate_is_bound_to_parameters_and_ray (test_calibration.CalibrationTests.test_certificate_is_bound_to_parameters_and_ray) ... ok
+test_finite_class_group_exact_mixing_comparison (test_calibration.CalibrationTests.test_finite_class_group_exact_mixing_comparison) ... ok
+test_mixed_cubic_spectral_calibration (test_calibration.CalibrationTests.test_mixed_cubic_spectral_calibration) ... ok
+test_nontrivial_ray_with_partial_real_signs (test_calibration.CalibrationTests.test_nontrivial_ray_with_partial_real_signs) ... ok
+test_real_quadratic_frequency_coverage_and_bound (test_calibration.CalibrationTests.test_real_quadratic_frequency_coverage_and_bound) ... ok
+test_totally_complex_quartic_with_nonzero_unit_rank (test_calibration.CalibrationTests.test_totally_complex_quartic_with_nonzero_unit_rank) ... ok
+test_full_rank_proper_subgroup_record_is_rejected (test_records.RecordedResultsTests.test_full_rank_proper_subgroup_record_is_rejected) ... ok
+test_materialized_results_against_sage (test_records.RecordedResultsTests.test_materialized_results_against_sage) ... ok
+test_saved_results_are_recertified (test_records.RecordedResultsTests.test_saved_results_are_recertified) ... ok
+test_membership_tail_and_replay_on_nonorthogonal_basis (test_sampling.GaussianTests.test_membership_tail_and_replay_on_nonorthogonal_basis) ... ok
+test_rectangular_and_zero_rank (test_sampling.GaussianTests.test_rectangular_and_zero_rank) ... ok
+test_reject_invalid_hypotheses (test_sampling.GaussianTests.test_reject_invalid_hypotheses) ... ok
+test_complex_disks_and_geometric_hypotheses (test_sampling.GeometryTests.test_complex_disks_and_geometric_hypotheses) ... ok
+test_exact_uniform_mass_including_boundaries (test_sampling.GeometryTests.test_exact_uniform_mass_including_boundaries) ... ok
+test_lll_unimodular_and_lovasz (test_sampling.LatticeTests.test_lll_unimodular_and_lovasz) ... ok
+test_svp_and_hkz_against_independent_small_enumeration (test_sampling.LatticeTests.test_svp_and_hkz_against_independent_small_enumeration) ... ok
+test_algorithm1_mixed_and_complex_signatures (test_sampling.NumberFieldTests.test_algorithm1_mixed_and_complex_signatures) ... ok
+test_algorithm1_nontrivial_ray_negative_scaling_and_fractional_shift (test_sampling.NumberFieldTests.test_algorithm1_nontrivial_ray_negative_scaling_and_fractional_shift) ... ok
+test_algorithm2_imaginary_quadratic_has_zero_dimensional_gaussian (test_sampling.NumberFieldTests.test_algorithm2_imaginary_quadratic_has_zero_dimensional_gaussian) ... ok
+test_algorithm2_proper_subgroup_oracle (test_sampling.NumberFieldTests.test_algorithm2_proper_subgroup_oracle) ... ok
+test_algorithm2_refuses_unjustified_mixing_claim (test_sampling.NumberFieldTests.test_algorithm2_refuses_unjustified_mixing_claim) ... ok
+test_algorithm2_replay_and_prime_ideal_identity (test_sampling.NumberFieldTests.test_algorithm2_replay_and_prime_ideal_identity) ... ok
+test_core_does_not_call_pari_class_or_unit_groups (test_sampling.NumberFieldTests.test_core_does_not_call_pari_class_or_unit_groups) ... ok
+test_fractional_crt_uses_local_congruence (test_sampling.NumberFieldTests.test_fractional_crt_uses_local_congruence) ... ok
+test_integral_basis_is_an_additive_basis (test_sampling.NumberFieldTests.test_integral_basis_is_an_additive_basis) ... ok
+test_prime_sampler_exact_mass_with_splitting_and_ramification (test_sampling.NumberFieldTests.test_prime_sampler_exact_mass_with_splitting_and_ramification) ... ok
+test_resource_failure_returns_no_fake_sample (test_sampling.NumberFieldTests.test_resource_failure_returns_no_fake_sample) ... ok
+test_zero_is_excluded_even_with_trivial_ray (test_sampling.NumberFieldTests.test_zero_is_excluded_even_with_trivial_ray) ... ok
+test_distortion_grid_satisfies_paper_bound (test_sampling.NumericalTests.test_distortion_grid_satisfies_paper_bound) ... ok
+test_endpoints_are_directed_exact_rationals (test_sampling.NumericalTests.test_endpoints_are_directed_exact_rationals) ... ok
+test_exact_bernoulli_decisions (test_sampling.NumericalTests.test_exact_bernoulli_decisions) ... ok
+test_norm_one_distortion_real_and_complex (test_sampling.NumericalTests.test_norm_one_distortion_real_and_complex) ... ok
+test_rounding_commutes_with_integer_translation_at_ties (test_sampling.NumericalTests.test_rounding_commutes_with_integer_translation_at_ties) ... ok
+test_walk_steps_use_a_certified_volume_upper_bound (test_sampling.NumericalTests.test_walk_steps_use_a_certified_volume_upper_bound) ... ok
+test_fractional_reconstruction_and_torsion_phase (test_sunits.CompactTests.test_fractional_reconstruction_and_torsion_phase) ... ok
+test_large_cancellation_and_modular_recovery (test_sunits.CompactTests.test_large_cancellation_and_modular_recovery) ... ok
+test_reconstruction_with_non_power_integral_basis (test_sunits.CompactTests.test_reconstruction_with_non_power_integral_basis) ... ok
+test_full_solver_without_existing_group_solver (test_sunits.EndToEndTests.test_full_solver_without_existing_group_solver) ... ok
+test_bkp_unknown_rank_and_integer_span (test_sunits.PostprocessingTests.test_bkp_unknown_rank_and_integer_span) ... ok
+test_class_generation_requires_actual_witnesses (test_sunits.PostprocessingTests.test_class_generation_requires_actual_witnesses) ... ok
+test_euclidean_slope_factor (test_sunits.PostprocessingTests.test_euclidean_slope_factor) ... ok
+test_incorrect_observation_is_rejected (test_sunits.PostprocessingTests.test_incorrect_observation_is_rejected) ... ok
+test_index_two_is_not_mistaken_for_completeness (test_sunits.PostprocessingTests.test_index_two_is_not_mistaken_for_completeness) ... ok
+test_ray_generation_is_distinct_from_class_generation (test_sunits.PostprocessingTests.test_ray_generation_is_distinct_from_class_generation) ... ok
+test_algorithm3_and_exceptional_algorithm5 (test_sunits.RelationTests.test_algorithm3_and_exceptional_algorithm5) ... ok
+test_uniform_residue_units_prime_power_and_crt (test_sunits.RelationTests.test_uniform_residue_units_prime_power_and_crt) ... ok
+test_known_residues_without_class_group_calls (test_sunits.ResidueTests.test_known_residues_without_class_group_calls) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 45.430s
+
+OK
