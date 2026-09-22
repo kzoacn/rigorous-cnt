@@ -1,45 +1,45 @@
-**Algorithm 1–2：数学规格、实现依据与限制**
+# Algorithms 1–2: mathematical specification and limitations
 
-对应版本：[arXiv:2512.01588v2](https://arxiv.org/pdf/2512.01588v2)，2026-02-19 修订。以下为本项目的实现论证与核对记录，并非形式化证明。
+Reference version: [arXiv:2512.01588v2](https://arxiv.org/pdf/2512.01588v2), revised February 19, 2026. These notes record the implementation arguments and checks; they are not a formal proof.
 
-**精确对象与坐标**
+## Exact objects and coordinates
 
-数域元素属于 Sage 的精确数域；嵌入通过 `QQbar` 和 `AA` 保留为精确代数数。无限位取所有实嵌入及每对复嵌入中虚部为正的一项。复位缩放存为两个有理数，物理坐标为实部与虚部。
+Number-field elements belong to Sage's exact number fields. Embeddings are retained as exact algebraic numbers through `QQbar` and `AA`. Infinite places comprise all real embeddings and the embedding with positive imaginary part from each complex conjugate pair. Complex scaling factors are stored as pairs of rationals, and their physical coordinates are real and imaginary parts.
 
-论文的 Minkowski 长度在复位有权重 2。短基检查使用这一加权长度。几何采样在未加权的实坐标空间中进行，复坐标组成圆盘；未加权长度不大于论文的加权长度，因此检查到的短基足以满足所用几何条件。
+The paper's Minkowski squared norm weights complex places by 2. Short-basis checks use this weighted norm. Geometric sampling takes place in unweighted real coordinates, where each complex coordinate forms a disk. The unweighted length is at most the paper's weighted length, so the certified short basis satisfies the geometric condition used by the sampler.
 
-提供的整基用其 **Z 加法张成空间** 与极大整环比较，不能仅检查它们生成的理想是否为单位理想。自动整基计算属于预处理；论文把约化整基作为输入，当前代码没有把这部分成本纳入复杂度声明。
+A supplied integral basis is checked by comparing its **additive Z-span** with the maximal order. Checking only that its elements generate the unit ideal is insufficient. Automatic integral-basis computation is preprocessing: the paper takes a reduced integral basis as input, and the implementation does not include this preprocessing cost in a complexity claim.
 
-**局部同余与分式 CRT**
+## Local congruences and fractional CRT
 
-有限模为 m，非零 tau 在所有 p|m 处为单位。射线条件是 ord_p(alpha-tau)>=ord_p(m)，以及指定实位 alpha/tau>0。模为单位理想时只保留非零和所选符号条件。
+For a finite modulus m, the nonzero element tau must be a unit at every p dividing m. The ray conditions are `ord_p(alpha-tau) >= ord_p(m)` and `alpha/tau > 0` at the selected real places. With the unit ideal as modulus, only nonvanishing and the selected sign conditions remain.
 
-对于与 m 互素的分式理想 b，以及在 m 处整的平移 gamma，构造分式理想 J=O_K+b+(gamma)+(tau)。它在 p|m 处的赋值是 0，并容纳其他位置所需的分母。
+For a fractional ideal b coprime to m and a shift gamma integral at m, construct the fractional ideal `J = O_K + b + (gamma) + (tau)`. It has valuation zero at every p dividing m and accommodates the denominators needed elsewhere.
 
-用整数 HNF 解 tau-gamma = u+v，其中 u∈b，v∈mJ，令 gamma_m=gamma+u。此时局部同余成立。由于 b∩mJ=bm，所有满足局部同余的元素组成 gamma_m+bm。最后沿 bm 的精确基做就近取整减去格点，得到短平移。
+Integer HNF solves `tau-gamma = u+v`, with u in b and v in mJ. Set `gamma_m = gamma+u`; it satisfies the local congruences. Since `b ∩ mJ = bm`, all elements satisfying them form `gamma_m+bm`. Finally, subtract a lattice vector by rounding along an exact basis of bm to obtain a short shift.
 
-gamma 在 p|m 处赋值为负时，gamma+b 中所有元素仍在该位置具有负赋值，无法满足 tau 的单位同余条件；程序报告空支持。
+If gamma has negative valuation at a prime dividing m, every element of gamma+b still has negative valuation there and cannot satisfy the unit congruence prescribed by tau. The program reports empty support.
 
-**短基与几何保证**
+## Short bases and geometric guarantees
 
-半径使用 Algorithm 1 给出的代数表达式：
+The radius uses the algebraic expression from Algorithm 1:
 
 ```text
 r = 48 * omega * block_size^(2*n/block_size) * n^(7/2)
     * abs(discriminant)^(3/(2*n)) * abs(N(x*b*m))^(1/n).
 ```
 
-先对有理近似整数矩阵做 LLL，取得整数变换，并把它作用在原始精确数域元素上；仅在球算术验证每个真实基向量长度≤r/(24n²) 后接受。该路径失败时，使用精确代数 Gram 矩阵的 LLL 和必要的 Algorithm 7 块 HKZ 顺序。所有路径保留整数幺模变换并检查几何界。采样的输出分布只取决于目标集合，采用另一种满足条件的短基不改变均匀分布。fpLLL 在 eta=1/2 边界无法完成时，回退到 NTL 的精确 LLL。
+First, LLL on an integer matrix obtained from a rational approximation supplies an integer transformation. Apply that transformation to the original exact field elements and accept it only if ball arithmetic certifies that every true basis-vector length is at most `r/(24n²)`. If this fails, use LLL on an exact algebraic Gram matrix and, when needed, the block HKZ schedule of Algorithm 7. Every path retains the unimodular transformation and checks the geometric bound. The output distribution depends only on the target set, so another basis satisfying the same condition preserves uniformity. A failure of fpLLL at the `eta=1/2` boundary triggers a fallback to exact NTL LLL.
 
-这里实现的 SVP 是可检查的小规模枚举器。它不是论文用来获得 `poly(input)*b^b` 的 Kannan 子程序；停止条件也以实际几何界为准。因此当前没有获得 Lemma 8.5 的完整位复杂度结论。若后端在预算内无法建立所需几何界，抛出错误，不进行未验证的采样。
+The SVP backend is a checkable enumeration routine for small instances. It is not the Kannan subroutine used to obtain the paper's `poly(input)*b^b` bound, and termination is controlled by the actual geometric bound. Consequently, the full bit-complexity conclusion of Lemma 8.5 has not been established. If the backend cannot certify the geometry within its budget, it raises an error instead of sampling without the required bound.
 
-**Proposition 8.8 的均匀性**
+## Uniformity in Proposition 8.8
 
-以列基 B 表示精确格，目标集合为 S+t，其中 S 是实区间与复圆盘的直积。受符号限制的实区间取半径 r/2、中心 ±r/2；中心符号同时考虑 tau 的像和实缩放的符号。最终另作严格射线检查，以排除 0 等边界。
+Use a column basis B for the exact lattice. The target is S+t, where S is a product of real intervals and complex disks. A real interval with a sign restriction has radius r/2 and center ±r/2; the sign of its center accounts for both the image of tau and the real scaling factor. A final strict ray check excludes boundary cases such as zero.
 
-令 D=2Σ||b_i||，选 epsilon_geom=1/(6n)。代码验证 D/epsilon_geom 不大于 S 的内接球半径，选择 U 严格控制 S 和 t 的长度。用向量化实坐标的 Frobenius 范数计算逆矩阵上界。
+Let `D = 2 sum ||b_i||` and `epsilon_geom = 1/(6n)`. Here D is a geometric quantity, not the field discriminant. The code verifies that `D/epsilon_geom` is at most the inradius of S and chooses U to strictly bound the lengths of points in S and the shift t. The Frobenius norm in real coordinates bounds the inverse matrix.
 
-选二进制网格 1/N，逐项取整获得 C 和 t_tilde，并验证：
+Choose a dyadic grid `1/N`, round entries to obtain C and t_tilde, and verify:
 
 ```text
 n/N <= D
@@ -50,113 +50,113 @@ sum ||c_i|| <= D
 det(C) != 0
 ```
 
-之后实现 Proposition 8.8 的三步流程：
+The sampler then performs the three steps of Proposition 8.8:
 
-1. w0=round(C^(-1)*t_tilde)。
-2. 在 `(1+4 epsilon_geom)S ∩ (1/N)Z^n` 均匀抽样 u，计算 v=round(C^(-1)u)，拒绝 C v 不属于 `(1+3 epsilon_geom)S` 的情况。
-3. 仅在精确的 B(v+w0) 属于 S+t 且满足严格射线条件时返回。
+1. Set `w0 = round(C^(-1)*t_tilde)`.
+2. Sample u uniformly from `(1+4 epsilon_geom)S ∩ (1/N)Z^n`, set `v = round(C^(-1)u)`, and reject if Cv is outside `(1+3 epsilon_geom)S`.
+3. Return only if the exact point `B(v+w0)` lies in S+t and satisfies the strict ray conditions.
 
-`round(q)=floor(q+1/2)` 对整数平移相容，包含半整数边界。C 的每个半开基本域包含同样多的网格点，因为 C 的列属于网格格 `(1/N)Z^n`。第一层接受集合因此均匀；上述几何条件确保目标格点全部被覆盖，最后按精确成员关系拒绝仍在目标集合上均匀。小规模测试穷举每个提议网格点，核对每个目标点对应的质量一致。
+`round(q) = floor(q+1/2)` commutes with integer translation, including half-integer ties. Each half-open fundamental cell of C contains the same number of grid points because the columns of C belong to `(1/N)Z^n`. The first acceptance stage is therefore uniform. The geometric conditions cover every target lattice point, and final rejection using exact membership preserves uniformity on the target set. Small tests enumerate all proposal grid points and compare the mass assigned to each target point.
 
-复圆盘逐个做二维拒绝采样，再组成直积，避免对所有复坐标联合拒绝造成接受率随维度恶化。
+Complex disks are sampled separately by two-dimensional rejection and then combined as a product. This avoids the deteriorating acceptance rate of joint rejection across all complex coordinates.
 
-**离散高斯与有限精度**
+## Discrete Gaussians and finite precision
 
-Lemma 2.22 的实现使用有理 Gram–Schmidt。对每个方向，中心和平方宽度是有理数；一维支持为：
+The implementation of Lemma 2.22 uses rational Gram–Schmidt data. In each direction, the center and squared width are rational, and the one-dimensional support is:
 
 ```text
 Z ∩ [c_i - s_i*sqrt(log(2*r^2/epsilon_G)),
      c_i + s_i*sqrt(log(2*r^2/epsilon_G))]
 ```
 
-这里 r 为格的秩；矩形基按其张成空间中的相同度量处理。程序检查 Lemma 2.22 的宽度前提。在该有限区间均匀提议，并以 exp(-pi*(z-c_i)^2/s_i²) 接受。这沿用引理的截断与 GPV 误差分配，保留其输出长度上界。
+Here r is the lattice rank; rectangular bases use the same metric on their span. The program checks the width hypothesis of Lemma 2.22. It proposes uniformly on this finite interval and accepts with probability `exp(-pi*(z-c_i)^2/s_i²)`. This follows the lemma's truncation and GPV error allocation and retains its output-length bound.
 
-接受概率通过 Arb 球包围区间与惰性均匀二进制实数比较。若两个区间重叠，继续读取随机位并增加精度。这样，未受资源限制的接受决定没有普通浮点舍入造成的额外概率偏差。有限资源中断可能依赖随机路径；不能把任意的“仅保留成功运行”实验当作原分布的证明。
+Acceptance compares an Arb ball enclosure of the probability with a lazy uniform binary real. If the intervals overlap, the program reads more random bits and increases precision. With unlimited resources, these decisions introduce no additional bias from ordinary floating-point rounding. Resource interruptions can depend on the random path, so an experiment that retains only successful runs is not automatically evidence for the original distribution.
 
-Sage 把 `QQ(real_float)` 解释为有理重构的场景会破坏包围性质。因此球端点和中点都使用 `exact_rational()`，不使用默认有理重构。测试专门检查平方根区间端点保持方向。
+Sage may interpret `QQ(real_float)` through rational reconstruction, which can destroy enclosure. Ball endpoints and midpoints therefore use `exact_rational()`, rather than default rational reconstruction. A dedicated test checks the direction of square-root interval endpoints.
 
-**Algorithm 2 的离散化与扰动**
+## Discretization and distortion in Algorithm 2
 
-取 s=1/n²、epsilon_G=epsilon/4。Algorithm 2 网格尺度的指数 `4*n²*s+1` 等于 5。用认证球计算纸面上界，再向下选取 dyadic delta。§9 的误差证明使用 delta 的上界，因此向下舍入是允许的。
+Set `s = 1/n²` and `epsilon_G = epsilon/4`. The exponent `4*n²*s+1` in Algorithm 2's grid scale is 5. Certified ball arithmetic computes the paper's upper bound, and delta is rounded down to a dyadic rational. The error argument in Section 9 uses an upper bound on delta, so rounding down is permitted.
 
-在行基 `(delta/n)*(e_i-e_(i+1))` 上采样，得到和为 0 的有理向量 a。以球算术构造正有理数 A_i，使其逼近 exp(a_i/w_i)，其中 w_i 是 1 或 2。
+Sampling on the row basis `(delta/n)*(e_i-e_(i+1))` gives a rational vector a whose coordinates sum to zero. Ball arithmetic constructs positive rationals A_i approximating `exp(a_i/w_i)`, where w_i is 1 or 2.
 
-为满足精确的乘法范数归一化，若有实位，留一个实位由其他位的乘积确定；若全为复位，留一个复位由其余正有理数的乘积确定。每次构造后直接认证每项相对误差≤delta/(2n)，同时有精确等式 ∏A_i^w_i=1。不能仅独立舍入每项后假定乘积仍为 1。
+To impose exact multiplicative norm normalization, reserve one real place, if any, and determine its factor from the product of the others. If all places are complex, determine one complex factor from the product of the other positive rational factors. After construction, certify every relative error as at most `delta/(2n)` and verify the exact equality `product(A_i^w_i) = 1`. Independently rounding every factor would not preserve this equality.
 
-把尺度 A*y、随机游走后的理想 bbar 传入 Algorithm 1。其精确元素 alpha 就是 Algorithm 2 最后消去 A*y 后的 beta；中间的缩放对象保留在 `BoxSample` 中。
+Pass the scale A*y and the ideal bbar obtained from the random walk to Algorithm 1. Its exact field element alpha is also the beta obtained by cancelling A*y at the end of Algorithm 2. The intermediate scaled object remains available in `BoxSample`.
 
-**素理想均匀性**
+## Uniform prime-ideal sampling
 
-Lemma 5.4 的代码从整数 {1,…,B} 均匀抽取 p，非素数则重试。若 p 上方有 k 个满足范数、模与子群条件的素理想，均匀选一个，再以 k/n 接受。
+The implementation of Lemma 5.4 samples p uniformly from the integers `{1,...,B}` and retries if p is not prime. If k prime ideals above p satisfy the norm, modulus, and subgroup conditions, choose one uniformly and accept it with probability k/n.
 
-每个合格素理想的一次提议质量恰为 `(1/B)*(1/k)*(k/n)=1/(nB)`，所以接受后的分布均匀。使用 `K.primes_above(p)`，包含惰性、分歧及整基指数的特殊素数，不只考虑剩余次数为 1 的素理想。概率质量穷举测试包含这些情况。
+Each eligible prime ideal has proposal mass `(1/B)*(1/k)*(k/n) = 1/(nB)`, so the accepted distribution is uniform. `K.primes_above(p)` includes inert and ramified primes and primes dividing the index of the defining power order, rather than only residue-degree-one primes. Exhaustive probability-mass tests include these cases.
 
-**混合保证的边界**
+## Limits of the mixing guarantees
 
-`WalkParameters(B,N)` 能完整定义所执行的随机游走，但不单凭两个整数建立 Corollary 6.5。其有效 B 界还依赖 Appendix A.1 中分析数论估计的隐含常数以及子群信息。
+`WalkParameters(B,N)` fully defines a random walk but does not establish Corollary 6.5 from two integers alone. A sufficient B also depends on hidden constants in the analytic estimates of Appendix A.1 and on subgroup information.
 
-步数可以独立具体化。Lemma 5.1 给出 `Vol(Pic^0_m) <= |Delta| * N(m)`；将它代入 Corollary 6.5，并为随机游走分配 epsilon/2 的 L1 预算，得到：
+The step count can be made explicit separately. Lemma 5.1 gives `Vol(Pic^0_m) <= |Delta| * N(m)`. Substituting this in Corollary 6.5 and assigning an L1 budget of epsilon/2 to the walk yields:
 
 ```text
 N >= ceil(7*n + 2*log(2/epsilon)
           + log(|Delta|*N(m)) - log(subgroup_index) + 2).
 ```
 
-`WalkParameters.from_prime_bound` 用有向球端点计算这一保守 N。它不调用类群或单位群。该步骤成立的前提仍是 B 足够大，不能单独当作混合证明。
+`WalkParameters.from_prime_bound` computes this conservative N using directed ball endpoints and does not call a class-group or unit-group solver. It still requires a sufficiently large B; selecting N alone is not a mixing proof.
 
-当前实现提供三种明确状态：通过下面的直接谱校准验证小数域的混合界；接受有外部数学依据的混合界；或显式允许尚无混合保证的运行。外部依据只是调用方给出的数学前提，程序不会仅凭说明文字把它当作已验证证明，也没有自动证明一般子群 oracle 的代数性质。
+Three states are distinguished: a bound certified by direct spectral calibration for a supported small field; an externally justified bound supplied by the caller; and an explicitly permitted run without an established mixing bound. External justification remains a mathematical premise. Descriptive text is not a verified proof, and the program does not automatically establish the algebraic properties of a general subgroup oracle.
 
-目前检索到的作者博士论文 Proposition 4.6 也把 Hecke 特征值界写成大 O；其显式素理想数量阈值不能替代这个特征值常数。相关来源：[Koen de Boer 博士论文](https://ir.cwi.nl/pub/32136/32136D.pdf)。
+Proposition 4.6 of [Koen de Boer's doctoral thesis](https://ir.cwi.nl/pub/32136/32136D.pdf) also states its Hecke eigenvalue bound using big-O notation. An explicit prime-count threshold does not replace the missing eigenvalue constant.
 
-因此：成员关系、几何条件及有理扰动可以逐次检查；“接近平稳分布”和 Theorem 9.5 的密度成功概率下界，在既无校准又无外部混合前提时保持 `not_established`。完整位复杂度在所有运行中保持未认证。测试成功、实际采样频率和配置中的说明文字都不能改变这些状态。
+Membership, geometry, and rational distortion can therefore be checked for each run, while closeness to stationarity and the density-based success bound of Theorem 9.5 remain `not_established` without calibration or an external mixing premise. Full bit complexity remains uncertified in every run. Passing tests, observed sampling frequencies, and descriptive configuration text do not change these statuses.
 
-**小数域的直接谱校准**
+## Direct spectral calibration for small fields
 
-`calibrate_walk` 使用 Appendix A.1 的 Fourier 分解和尾界，以实际计算的特征值上界代替含大 O 常数的分析数论估计。这是本项目增加的独立预处理；调用 PARI 的类群、单位群和射线类群功能，并要求基础 bnf 通过 `proof=True` 认证。它的代价未纳入论文复杂度保证。当前校准器针对完整的 G=Pic^0_m；核心采样器仍支持一般子群。
+`calibrate_walk` uses the Fourier decomposition and tail bound of Appendix A.1, replacing the analytic estimate with hidden constants by directly computed eigenvalue bounds. This is additional preprocessing supplied by this project. It calls PARI class-group, unit-group, and ray class-group facilities and requires the underlying bnf data to be certified with `proof=True`. Its cost is not covered by a claim to the paper's complexity bound. The calibrator currently handles the full group `G = Pic^0_m`; the core sampler continues to support general subgroups.
 
-射线类群取循环生成元 g_j、阶 d_j。用精确理想运算验证：
+For cyclic ray class generators g_j with orders d_j, exact ideal arithmetic verifies:
 
 ```text
 g_j^d_j = (alpha_j)
 P = (alpha_P) * product(g_j^e_j)
 ```
 
-其中 alpha_j、alpha_P 均是主射线元素，同余和正号也会检查。PARI 与 Sage 的理想坐标经数域元素显式转换，避免假定两套内部整基相同。部分实位符号限制根据 bnf 使用的实根顺序与精确实嵌入的匹配来转换；无法区分的情况报告资源失败。
+Both alpha_j and alpha_P must be principal ray elements, with congruence and positivity checked. PARI and Sage ideal coordinates are converted through explicit field elements instead of assuming identical internal integral bases. Conditions on selected real places are translated by matching the bnf ordering of real roots with exact real embeddings. Failure to distinguish the embeddings within the budget is reported as a resource failure.
 
-从完整单位群生成元（包括根单位）到 `(O_K/m)^*` 和实位符号群建立整数指数矩阵。取模同态的整数核，再投影到自由单位坐标并取 HNF，得到完整的射线单位格 Λ=Log(O_K^*∩K^{m,1}) 的基。根单位坐标在计算核时保留，因此不会误把可由根单位消去的同余当作额外自由单位限制。
+An integer exponent matrix represents the map from the full unit group, including roots of unity, to `(O_K/m)^*` and the real sign groups. Take its integer kernel, project to the free-unit coordinates, and apply HNF to obtain a basis of the complete ray-unit lattice `Lambda = Log(O_K^* ∩ K^{m,1})`. Retaining torsion coordinates in the kernel prevents a congruence that roots of unity can cancel from becoming an unnecessary constraint on free units.
 
-令 L 为 Λ 的行基，r 为其秩。对每个 k∈Z^r，
+Let L be a row basis of Lambda and r its rank. For every k in Z^r,
 
 ```text
 u = L^T * (L*L^T)^(-1) * k
 ```
 
-属于 Λ 的对偶格。令 Log_0 表示减去坐标均值的对数嵌入。全部字符可用 u 与有限参数 a_j∈{0,…,d_j-1} 描述；素理想 P 的相位是：
+lies in the dual lattice. Let Log_0 be the logarithmic embedding with the coordinate mean subtracted. Every character is described by u and finite parameters `a_j in {0,...,d_j-1}`. Its phase at a prime ideal P is:
 
 ```text
 <u, Log_0(alpha_P)>
   + sum_j e_j * (<u, Log_0(alpha_j)> + a_j) / d_j.
 ```
 
-取其 `exp(2*pi*i*phase)`，对范数≤B 且与 m 互素的全部素理想平均，即得相应 Hecke 特征值。每个相位、三角函数及模长均通过球运算包围。零频率和全零有限参数对应的常值字符排除。
+Averaging `exp(2*pi*i*phase)` over all prime ideals of norm at most B coprime to m gives the corresponding Hecke eigenvalue. Ball arithmetic encloses every phase, trigonometric evaluation, and absolute value. Exclude the constant character with zero frequency and all finite parameters zero.
 
-为覆盖所有 ||u||≤R 的字符，利用 k_i=<L_i,u>，从而 |k_i|≤||L_i||R，构造具有有向上界的有限整数盒。只剔除球运算已证明范数大于 R 的频率；边界不确定的频率保留。群大小、盒内候选数及总字符数受显式资源预算限制。
+To cover all characters with `||u|| <= R`, use `k_i = <L_i,u>` and hence `|k_i| <= ||L_i|| R` to construct a finite integer box with directed upper bounds. Discard a frequency only when ball arithmetic proves its norm exceeds R; retain uncertain boundary cases. Explicit budgets limit group size, box size, and the total character count.
 
-取 s=1/n²，s0=1/(2800n²)。Corollary 6.5 证明中的平滑参数界保证 s0 可以作为 s' 的下界。令 V 为 Lemma 5.1 给出的 Pic^0_m 体积上界。Appendix A.1 给出：
+Set `s = 1/n²` and `s0 = 1/(2800n²)`. The smoothing-parameter bound in the proof of Corollary 6.5 allows s0 as a lower bound for s'. Let V be the upper bound on the volume of Pic^0_m from Lemma 5.1. Appendix A.1 gives:
 
 ```text
 L1_error^2 <= 2 * V * s0^(-r) * (c^(2*N) + exp(-2*R^2*s^2)),
 ```
 
-其中 c 上界所有 ||u||≤R 的非常值字符特征值，且 R 满足 √2 R s≥√r。令 e=epsilon/2，先选有理 R，使尾项≤e²/2；然后增加 B，直到认证的 c≤3/4；最后选择 N 并直接检查整个右侧≤e²。有限频率以外的项由该 Gaussian 尾界控制，因此不需要把“频率截断后看起来已经混合”当作证明。r=0 时无高频尾项；群平凡时混合误差为 0。
+where c bounds the eigenvalues of all nonconstant characters with `||u|| <= R`, and R satisfies `sqrt(2) R s >= sqrt(r)`. With `e = epsilon/2`, first choose rational R so the tail contribution is at most e²/2. Increase B until c is certified to be at most 3/4, then choose N and directly check that the entire right-hand side is at most e². The Gaussian tail bounds the frequencies outside the finite enumeration; apparent mixing after frequency truncation is not used as a proof. When r is zero there is no high-frequency tail. A trivial group has zero mixing error.
 
-校准器返回 `SpectralMixingCertificate`，保存谱界、截断半径、体积界、字符数量、精度、B,N 与 L1 上界，并绑定原数域和模。该对象用于检查运行设置与校准一致；它是运行证据记录，不是独立的形式化证明文件。
+The returned `SpectralMixingCertificate` records the spectral bound, cutoff radius, volume bound, character count, precision, B,N, and L1 bound, and is bound to the original field context and modulus. It checks consistency between the run and its calibration; it is an evidence record, not an independent formal proof file.
 
-测试对类数为 2 的虚二次域使用两状态随机游走的精确误差作独立比较；对实二次域使用已知单位长度核对频率覆盖数量及总误差不等式。另测试混合三次域、全复四次域和非平凡模的部分实位符号限制。
+For an imaginary quadratic field of class number two, tests compare with the exact error of a two-state random walk. For a real quadratic field, the known unit length checks frequency coverage and the total error inequality. Further tests cover a mixed cubic field, a totally complex quartic field, and a nontrivial modulus with sign conditions at only some real places.
 
-**纸面细节的处理记录**
+## Implementation conventions
 
-- 统一列基用于几何映射、行变换用于格约化；转换处保留精确矩阵。
-- Proposition 8.8 的 N 通过实际矩阵不等式选择，不依赖正文中容易误抄的逆范数方向。
-- 射线的负符号中心、分式局部同余、严格非零条件显式处理。
-- 参考实现采用代数数精确比较代替手工实现根隔离；没有由此宣称所有 Sage 后端操作自动具有论文所需的位复杂度。
+- Geometric maps use column bases; lattice reduction uses row transformations. Exact matrices are retained at conversions.
+- Proposition 8.8's N is chosen by the actual matrix inequalities, avoiding reliance on an easily mistranscribed inverse-norm inequality.
+- Negative ray signs, fractional local congruences, and strict nonvanishing are handled explicitly.
+- Exact algebraic comparisons replace a separate implementation of root isolation. This does not assert that every Sage backend operation automatically has the bit complexity required by the paper.
