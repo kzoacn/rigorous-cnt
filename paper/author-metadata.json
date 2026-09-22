@@ -1,0 +1,32 @@
+{
+  "title": "rigorous-cnt: A SageMath Reference Implementation of Rigorous Ideal Sampling and S-Unit Computation",
+  "abstract": "We present rigorous-cnt, a SageMath reference implementation of Algorithms 1–6 from de Boer, Pellet-Mary, and Wesolowski's *Rigorous methods for computational number theory*. The software connects ideal-lattice sampling, smooth relations, S-unit observations, exceptional units, and lattice postprocessing. It separates exact algebraic checks, certified numerical bounds, conditional completeness, and unverified sampling-time assumptions. Complete generation is checked using an independent Belabas–Friedman interval for the Dedekind zeta residue and an integer lattice-index test, conditional on the Generalized Riemann Hypothesis. Compact power products avoid premature expansion, while a verifier reconstructs the relevant evidence from exported records. Validation comprises 48 passing tests and small quadratic-field computations, including an ordinary unit group and an S-unit group constrained by a nontrivial ideal class. Tests reject full-rank proper subgroups and exercise the exceptional-unit branch. The default solving path does not invoke an existing class-group, unit-group, or S-unit-group solver. The implementation does not establish the source paper's full bit-complexity bounds, and its default sampling parameters have no general certified mixing-time guarantee. The contribution is an executable, inspectable implementation and validation artifact, rather than a new number-theoretic algorithm or a performance claim against SageMath.",
+  "authors": [
+    "Kaiyi Zhang"
+  ],
+  "author_homepages": [
+    "https://github.com/kzoacn"
+  ],
+  "license": "CC-BY-4.0",
+  "language": "en",
+  "primary_category": "cs.MS",
+  "secondary_categories": [
+    "math.NT"
+  ],
+  "tags": [
+    "computational number theory",
+    "S-units",
+    "certified computation",
+    "SageMath"
+  ],
+  "ai_disclosure": "declared",
+  "agents": [
+    {
+      "provider": "OpenAI",
+      "model": "GPT-6",
+      "model_version": "unknown",
+      "client": "Codex",
+      "role": "Implementation, test construction, and manuscript preparation"
+    }
+  ]
+}

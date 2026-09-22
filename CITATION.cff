@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Please cite the original algorithm paper and this implementation when using this artifact."
+type: software
+title: "rigorous-cnt: Reference Implementations of Algorithms 1–6"
+authors:
+  - given-names: Kaiyi
+    family-names: Zhang
+    website: "https://github.com/kzoacn"
+version: 0.2.0
+date-released: 2026-09-22
+repository-code: "https://github.com/kzoacn/rigorous-cnt"
+url: "https://github.com/kzoacn/rigorous-cnt"
+abstract: "A SageMath reference implementation of Algorithms 1–6 from arXiv:2512.01588v2, with exact ideal identities, compact S-units, and independently checked GRH-conditional completeness. Full asymptotic bit-complexity bounds and general mixing bounds for default parameters are not established."
+keywords:
+  - computational number theory
+  - SageMath
+  - S-units
+  - certified computation

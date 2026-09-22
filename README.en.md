@@ -4,6 +4,8 @@ A SageMath reference implementation of Algorithms 1–6 in [*Rigorous methods fo
 
 [中文说明](README.md)
 
+The accompanying [implementation and validation manuscript](paper/manuscript.md) is by Kaiyi Zhang.
+
 The implementation connects ideal sampling, smooth relations, S-unit observations, exceptional units, lattice postprocessing, and restriction to an arbitrary set of finite primes. It retains units as compact power products and exports exact data that can be checked again without repeating the random search.
 
 ## Guarantees and scope

@@ -2,6 +2,8 @@
 
 [English overview](README.en.md)
 
+论文稿件：[实现与验证报告](paper/manuscript.md)（英文，Kaiyi Zhang）。
+
 对应 [Rigorous methods for computational number theory，arXiv:2512.01588v2](https://arxiv.org/abs/2512.01588v2)。使用 SageMath 中的普通 Python，已在 SageMath 10.7 / Python 3.12 验证。
 
 已实现理想采样、平滑关系、S-unit 关系、例外单位、BKP 后处理、完整生成判定和任意 S 的限制。输出采用紧凑幂乘积；小结果可以通过带高度界的模运算恢复，避免巨大中间展开。
