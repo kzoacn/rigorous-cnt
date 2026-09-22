@@ -2,7 +2,7 @@
 
 [English overview](README.en.md)
 
-论文稿件：[实现与验证报告](paper/manuscript.md)（英文，Kaiyi Zhang）。
+论文：[Markdownxiv 2609.00011v1](https://markdownxiv.github.io/abs/2609.00011v1/)（英文，Kaiyi Zhang）。[Markdown 源稿](paper/manuscript.md) · [发布记录](docs/PUBLICATION.md)
 
 对应 [Rigorous methods for computational number theory，arXiv:2512.01588v2](https://arxiv.org/abs/2512.01588v2)。使用 SageMath 中的普通 Python，已在 SageMath 10.7 / Python 3.12 验证。
 
